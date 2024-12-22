@@ -1,0 +1,27 @@
+@font-face {
+  font-family: Ruda-Reg;
+  src: url(../fonts/Ruda/Ruda-Regular.ttf);
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: Ruda-Bold;
+  src: url(../fonts/Ruda/Ruda-Bold.ttf);
+  font-style: normal;
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: Inter-Reg;
+  src: url(../fonts/Inter/Inter_18pt-Regular.ttf);
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: Inter-Bold;
+  src: url(../fonts/Inter/Inter_18pt-Bold.ttf);
+  font-style: normal;
+  font-weight: bold;
+}
