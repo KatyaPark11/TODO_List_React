@@ -31,9 +31,9 @@ const Delete = styled.span`
 export const TodoItem = ({ title, checked, id, priority }) => {
   const {mutate} = useDeleteTodoItem();
   const onClickDeleteHandler = () => {
-      if (window.confirm(`Удалить элемент ${title}?`)) {
-          mutate({id});
-      }
+    if (window.confirm(`Удалить элемент ${title}?`)) {
+      mutate({id});
+    }
   }
   return (
     <TodoItemContainer>

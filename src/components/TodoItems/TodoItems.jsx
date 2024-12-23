@@ -19,69 +19,41 @@ const ScrollableContainer = styled.div`
 
 export const TodoItems = () => {
   const [searchValue, setSearchValue] = useState('');
-  const [sortedItems, setSortedItems] = useState(null);
   const [isSorted, setIsSorted] = useState(false);
-
   const { data: todoItems, isLoading } = useData();
 
-  useEffect(() => {
-    if (isSorted && sortedItems) {
-      const filteredBySearchItems = todoItems.filter((todoItem) => {
-          const clearedItemTitle = todoItem.title.replace(/\s+/g, '').toLowerCase();
-          const clearedSearchValue = searchValue.replace(/\s+/g, '').toLowerCase();
-          return clearedItemTitle.includes(clearedSearchValue) || clearedSearchValue.length < 3;
-      });
-      setSortedItems(filteredBySearchItems.sort((a, b) => b.priority - a.priority));
-    }  else {
-      setSortedItems(null);
-    }
-  }, [todoItems]);
+  const filterAndSortItems = (items) => {
+    const clearedSearchValue = searchValue.replace(/\s+/g, '').toLowerCase();
+    return items
+      .filter(todoItem => {
+        const clearedItemTitle = todoItem.title.replace(/\s+/g, '').toLowerCase();
+        return clearedItemTitle.includes(clearedSearchValue) || clearedSearchValue.length < 2;
+      })
+      .sort((a, b) => (isSorted ? b.priority - a.priority : 0));
+  };
 
-  if (!todoItems || isLoading) {
+  const todoItemsElements = todoItems ? filterAndSortItems(todoItems).map(item => (
+    <TodoItem key={item.id} title={item.title} checked={item.isDone} id={item.id} priority={item.priority} />
+  )) : null;
+
+  if (isLoading) {
     return (
       <TodoItemsContainer>
         Загрузка данных...
       </TodoItemsContainer>
     );
-  }
-
-  const filteredBySearchItems = todoItems.filter((todoItem) => {
-      const clearedItemTitle = todoItem.title.replace(/\s+/g, '').toLowerCase();
-      const clearedSearchValue = searchValue.replace(/\s+/g, '').toLowerCase();
-      return clearedItemTitle.includes(clearedSearchValue) || clearedSearchValue.length < 2;
-  });
-
-  const onClickHandler = () => {
-    setIsSorted(prev => !prev);
-    setSortedItems(filteredBySearchItems.sort((a, b) => b.priority - a.priority));
   };
-
-  const todoItemsElements = (isSorted && sortedItems) ? sortedItems.map((item, index) => {
-    return <TodoItem
-        key={item.id}
-        title={item.title}
-        checked={item.isDone}
-        id={item.id}
-        priority={item.priority} />;
-  }) : filteredBySearchItems.map((item, index) => {
-      return <TodoItem
-          key={item.id}
-          title={item.title}
-          checked={item.isDone}
-          id={item.id}
-          priority={item.priority} />;
-  });
 
   return (
     <TodoItemsContainer>
       <SearchSortContainer>
-      <SortButton isSorted={isSorted} onClick={onClickHandler}>Сорт по приоритету</SortButton>
-        <SearchInput value={searchValue} setValue={setSearchValue} setSortedItems={setSortedItems} />
+        <SortButton isSorted={isSorted} onClick={() => setIsSorted(prev => !prev)}>Сорт по приоритету</SortButton>
+        <SearchInput value={searchValue} setValue={setSearchValue} />
       </SearchSortContainer>
       <ScrollableContainer>
         {todoItemsElements}
       </ScrollableContainer>
-      <NewTodoItem filteredBySearchItems={filteredBySearchItems} setSortedItems={setSortedItems}/>
+      <NewTodoItem filteredBySearchItems={filterAndSortItems(todoItems)} />
     </TodoItemsContainer>
-  )
-}
+  );
+};
